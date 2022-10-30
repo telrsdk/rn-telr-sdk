@@ -1,334 +1,258 @@
 # rn-telr-sdk
 Our mission is to build connections that remove fragmentation in the e-commerce ecosystem. We make these connections to enable our customers to go cashless, digitising the way that they accept payments
 
-### Announcements 
-- 📣 We're looking for maintainers and contributors! See [#598](https://github.com/react-native-modal/react-native-modal/discussions/598)
-- 💡 We're brainstorming if/how we can make a JavaScript-only version of `react-native-modal`. See [#597](https://github.com/react-native-modal/react-native-modal/discussions/597)
-- 🙏 If you have a question, please [start a new discussion](https://github.com/react-native-modal/react-native-modal/discussions) instead of opening a new issue.
+## Getting Started
 
-# react-native-modal
+Use this  [link](https://telr.com/support/article-categories/getting-started/) to started.
+
+## Register with Telr
+
+Use this  [link](https://telr.com/support/knowledge-base/admin-system/) to find the step to register in our system.
+
+## Mobile API Integration Guide
+
+Use this  [link](https://telr.com/support/knowledge-base/mobile-api-integration-guide/) to find all apis and country and language support by telr.
 
 [![npm version](https://badge.fury.io/js/react-native-modal.svg)](https://badge.fury.io/js/react-native-modal)
-[![styled with prettier](https://img.shields.io/badge/styled_with-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
-
-> If you're new to the React Native world, please notice that React Native itself offers a [<Modal /> component that works out-of-the-box](https://reactnative.dev/docs/modal).
-
-An enhanced, animated, customizable React Native modal.
-
-The goal of `react-native-modal` is expanding the original React Native `<Modal>` component by adding animations, style customization options, and new features, while still providing a simple API.
-
-<p align="center">
-<img src="/.github/images/example-modal.gif" height="500" />
-</p>
-
-## Features
-
-- Smooth enter/exit animations
-- Plain simple and flexible APIs
-- Customizable backdrop opacity, color and timing
-- Listeners for the modal animations ending
-- Resize itself correctly on device rotation
-- Swipeable
-- Scrollable
 
 ## Setup
 
-This library is available on npm, install it with: `npm i react-native-modal` or `yarn add react-native-modal`.
+This library is available on npm, install it with: `npm i rn-telr-sdk` or `yarn add rn-telr-sdk`.
 
 ## Usage
 
-Since `react-native-modal` is an extension of the [original React Native modal](https://reactnative.dev/docs/modal.html), it works in a similar fashion.
-
-1.  Import `react-native-modal`:
+1.  Import `rn-telr-sdk`:
 
 ```javascript
-import Modal from "react-native-modal";
+import TelrSdk from "rn-telr-sdk";
 ```
 
-2.  Create a `<Modal>` component and nest its content inside of it:
+2.  Add a `<TelrSdk>` component and nest its content inside of it:
 
 ```javascript
 function WrapperComponent() {
+  const [telrModalVisible, setTelrModalVisible] = useState(false);
+  const [paymentRequest, setPaymentRequest] = useState(null);
+  const telrModalClose = () => {
+    setTelrModalVisible(false)
+    Alert.alert("Transaction aborted by user");
+  }
+  const didFailWithError = (message) => {
+    setTelrModalVisible(false)
+    Alert.alert(message);
+  }
+  const showTelrPaymentPage = () => {
+    var paymentRequest = {
+      store_id: "15996",
+      key: "pQ6nP-7rHt@5WRFv",
+      device_type: "iOS",//Android
+      device_id: "36C0EC49-AA2F-47DC-A4D7-D9927A739F5F",
+      app_name: "TelrSDK",//enter app name
+      app_version: "1.0",//app version
+      app_user: "123456",//app user
+      app_id: "102863o777",//app user id
+      tran_test: "1", // 1=test, 0=production
+      tran_type: "sale",//sale
+      tran_class: "paypage",
+      tran_cartid: `${Math.floor(Math.random() * 100) + 1}`,//enter cart id it shoud be unique for every transaction //1234567890
+      tran_description: "Test Mobile API",// enter tran description
+      tran_currency: "AED",
+      tran_amount: "1.00",
+      tran_language: "en",
+      tran_firstref: "",
+      billing_name_title: "Mr",
+      billing_name_first: "John",
+      billing_name_last: "Parker",
+      billing_address_line1: "sclk lk fk",
+      billing_address_city: "Riyad",
+      billing_address_region: "Saudi Arabia",
+      billing_address_country: "SA",
+      billing_custref: "001",
+      billing_email: "stackfortytwo@gmail.com",
+      billing_phone: "1234567890",
+    }
+    setPaymentRequest(paymentRequest)
+    setTelrModalVisible(true)
+  }
   return (
     <View>
-      <Modal>
-        <View style={{ flex: 1 }}>
-          <Text>I am the modal content!</Text>
-        </View>
-      </Modal>
+      <TelrSdk paymentRequest={paymentRequest} telrModalVisible={telrModalVisible} telrModalClose={telrModalClose} didFailWithError={didFailWithError}/>
     </View>
   );
 }
 ```
-
-3.  Then, show the modal by setting the `isVisible` prop to `true`:
-
-```javascript
-function WrapperComponent() {
-  return (
-    <View>
-      <Modal isVisible={true}>
-        <View style={{ flex: 1 }}>
-          <Text>I am the modal content!</Text>
-        </View>
-      </Modal>
-    </View>
-  );
-}
-```
-
-The `isVisible` prop is the only prop you'll really need to make the modal work: you should control this prop value by saving it in your wrapper component state and setting it to `true` or `false` when needed.
-
 ## A complete example
 
-The following example consists in a component (`ModalTester`) with a button and a modal.
-The modal is controlled by the `isModalVisible` state variable and it is initially hidden, since its value is `false`.  
-Pressing the button sets `isModalVisible` to true, making the modal visible.  
-Inside the modal there is another button that, when pressed, sets `isModalVisible` to false, hiding the modal.
+The following example consists in a component (`TelrSdk`) with a button Make Payment.
+The modal is controlled by the `telrModalVisible` state variable and it is initially hidden, since its value is `false`.  
+Pressing the button sets `telrModalVisible` to true, making the TelrSdk visible.  
+Inside the TerlSdk there is another button that, when pressed, sets `telrModalVisible` to false, hiding the TelrSdk.
 
 ```javascript
-import React, { useState } from "react";
-import { Button, Text, View } from "react-native";
-import Modal from "react-native-modal";
 
-function ModalTester() {
-  const [isModalVisible, setModalVisible] = useState(false);
+import React, { useState } from 'react';
+import {
+  SafeAreaView,
+  StyleSheet,
+  View,
+  Pressable,
+  Text,
+  Alert
+} from 'react-native';
 
-  const toggleModal = () => {
-    setModalVisible(!isModalVisible);
-  };
+import TelrSdk from './index2';
+
+const App = () => {
+
+  const [telrModalVisible, setTelrModalVisible] = useState(false);
+
+  const [paymentRequest, setPaymentRequest] = useState(null);
+  
+  const telrModalClose = () => {
+    setTelrModalVisible(false)
+    Alert.alert("Transaction aborted by user");
+  }
+  const didFailWithError = (message) => {
+    setTelrModalVisible(false)
+    Alert.alert(message);
+  }
+
+  const showTelrPaymentPage = () => {
+    var paymentRequest = {
+      store_id: "15996",
+      key: "pQ6nP-7rHt@5WRFv",
+      device_type: "iOS",//Android
+      device_id: "36C0EC49-AA2F-47DC-A4D7-D9927A739F5F",
+      app_name: "TelrSDK",//enter app name
+      app_version: "1.0",//app version
+      app_user: "123456",//app user
+      app_id: "102863o777",//app user id
+      tran_test: "1", // 1=test, 0=production
+      tran_type: "sale",//sale
+      tran_class: "paypage",
+      tran_cartid: `${Math.floor(Math.random() * 100) + 1}`,//enter cart id it shoud be unique for every transaction //1234567890
+      tran_description: "Test Mobile API",// enter tran description
+      tran_currency: "AED",
+      tran_amount: "1.00",
+      tran_language: "en",
+      tran_firstref: "",
+      billing_name_title: "Mr",
+      billing_name_first: "John",
+      billing_name_last: "Parker",
+      billing_address_line1: "sclk lk fk",
+      billing_address_city: "Riyad",
+      billing_address_region: "Saudi Arabia",
+      billing_address_country: "SA",
+      billing_custref: "001",
+      billing_email: "stackfortytwo@gmail.com",
+      billing_phone: "1234567890",
+    }
+    setPaymentRequest(paymentRequest)
+    setTelrModalVisible(true)
+  }
 
   return (
-    <View style={{ flex: 1 }}>
-      <Button title="Show modal" onPress={toggleModal} />
-
-      <Modal isVisible={isModalVisible}>
-        <View style={{ flex: 1 }}>
-          <Text>Hello!</Text>
-
-          <Button title="Hide modal" onPress={toggleModal} />
-        </View>
-      </Modal>
-    </View>
+    <SafeAreaView style={styles.backgroundStyle}>
+      <TelrSdk paymentRequest={paymentRequest} telrModalVisible={telrModalVisible} telrModalClose={telrModalClose} didFailWithError={didFailWithError}/>
+      <View style={styles.centeredView}>
+        <Pressable
+          style={[styles.button, styles.buttonOpen]}
+          onPress={() => showTelrPaymentPage()}>
+          <Text style={styles.textStyle}>Make Payment</Text>
+        </Pressable>
+      </View>
+    </SafeAreaView>
   );
-}
+};
 
-export default ModalTester;
+const styles = StyleSheet.create({
+  backgroundStyle: {
+    backgroundColor: 'white',
+    flex: 1
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 22
+  },
+  button: {
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2
+  },
+  buttonOpen: {
+    backgroundColor: "#2196F3",
+  },
+  textStyle: {
+    color: "white",
+    fontWeight: "bold",
+    textAlign: "center"
+  },
+});
+
+export default App;
 ```
 
-For a more complex example take a look at the `/example` directory.
+For a more complex example take a look at the `/RNTelrSdk` directory.
 
 ## Available props
 
 | Name                             | Type                 | Default                        | Description                                                                                                                                |
 | -------------------------------- | -------------------- | ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------ |
-| `animationIn`                    | `string` or `object` | `"slideInUp"`                    | Modal show animation                                                                                                                       |
-| `animationInTiming`              | `number`             | `300`                            | Timing for the modal show animation (in ms)                                                                                                |
-| `animationOut`                   | `string` or `object` | `"slideOutDown"`                 | Modal hide animation                                                                                                                       |
-| `animationOutTiming`             | `number`             | `300`                            | Timing for the modal hide animation (in ms)                                                                                                |
-| `avoidKeyboard`                  | `bool`               | `false`                          | Move the modal up if the keyboard is open                                                                                                  |
-| `coverScreen`                    | `bool`               | `true`                           | Will use RN `Modal` component to cover the entire screen wherever the modal is mounted in the component hierarchy                          |
-| `hasBackdrop`                    | `bool`               | `true`                           | Render the backdrop                                                                                                                        |
-| `backdropColor`                  | `string`             | `"black"`                        | The backdrop background color                                                                                                              |
-| `backdropOpacity`                | `number`             | `0.70`                           | The backdrop opacity when the modal is visible                                                                                             |
-| `backdropTransitionInTiming`     | `number`             | `300`                            | The backdrop show timing (in ms)                                                                                                           |
-| `backdropTransitionOutTiming`    | `number`             | `300`                            | The backdrop hide timing (in ms)                                                                                                           |
-| `customBackdrop`                 | `node`               | `null`                           | The custom backdrop element                                                                                                                |
-| `children`                       | `node`               | **REQUIRED**                   | The modal content                                                                                                                          |
-| `deviceHeight`                   | `number`             | `null`                           | Device height (useful on devices that can hide the navigation bar)                                                                         |
-| `deviceWidth`                    | `number`             | `null`                           | Device width (useful on devices that can hide the navigation bar)                                                                          |
-| `isVisible`                      | `bool`               | **REQUIRED**                   | Show the modal?                                                                                                                            |
-| `onBackButtonPress`              | `func`               | `() => null`                     | Called when the Android back button is pressed                                                                                             |
-| `onBackdropPress`                | `func`               | `() => null`                     | Called when the backdrop is pressed                                                                                                        |
-| `onModalWillHide`                | `func`               | `() => null`                     | Called before the modal hide animation begins                                                                                              |
-| `onModalHide`                    | `func`               | `() => null`                     | Called when the modal is completely hidden                                                                                                 |
-| `onModalWillShow`                | `func`               | `() => null`                     | Called before the modal show animation begins                                                                                              |
-| `onModalShow`                    | `func`               | `() => null`                     | Called when the modal is completely visible                                                                                                |
-| `onSwipeStart`                   | `func`               | `() => null`                     | Called when the swipe action started                                                                                                       |
-| `onSwipeMove`                    | `func`               | `(percentageShown) => null`      | Called on each swipe event                                                                                                                 |
-| `onSwipeComplete`                | `func`               | `({ swipingDirection }) => null` | Called when the `swipeThreshold` has been reached                                                                                          |
-| `onSwipeCancel`                  | `func`               | `() => null`                     | Called when the `swipeThreshold` has not been reached                                                                                      |
-| `panResponderThreshold`          | `number`             | `4`                              | The threshold for when the panResponder should pick up swipe events                                                                        |
-| `scrollOffset`                   | `number`             | `0`                              | When > 0, disables swipe-to-close, in order to implement scrollable content                                                                |
-| `scrollOffsetMax`                | `number`             | `0`                              | Used to implement overscroll feel when content is scrollable. See `/example` directory                                                     |
-| `scrollTo`                       | `func`               | `null`                           | Used to implement scrollable modal. See `/example` directory for reference on how to use it                                                |
-| `scrollHorizontal`               | `bool`               | `false`                          | Set to true if your scrollView is horizontal (for a correct scroll handling)                                                               |
-| `swipeThreshold`                 | `number`             | `100`                            | Swiping threshold that when reached calls `onSwipeComplete`                                                                                |
-| `swipeDirection`                 | `string` or `array`  | `null`                           | Defines the direction where the modal can be swiped. Can be 'up', 'down', 'left, or 'right', or a combination of them like `['up','down']` |
-| `useNativeDriver`                | `bool`               | `false`                          | Defines if animations should use native driver                                                                                             |
-| `useNativeDriverForBackdrop`     | `bool`               | `null`                           | Defines if animations for backdrop should use native driver (to avoid flashing on android)                                                 |
-| `hideModalContentWhileAnimating` | `bool`               | `false`                          | Enhances the performance by hiding the modal content until the animations complete                                                         |
-| `propagateSwipe`                 | `bool` or `func`     | `false`                          | Allows swipe events to propagate to children components (eg a ScrollView inside a modal)                                                   |
-| `style`                          | `any`                | `null`                           | Style applied to the modal                                                                                                                 |
+| `store_id`                    | `string` | **REQUIRED**                    | Enter your store id here which is provide by telr                                                                                                                       |
+| `key`              | `string`             | **REQUIRED**                            | Enter your store key here which is provide by telr                                                                                                 |
+| `device_type`                   | `string` | `"iOS"` or `"Android"`                 | Enter your device type here is android or iOS                                                                                                                       |
+| `device_id`             | `string`             | `36C0EC49-AA2F-47DC-A4D7-D9927A739F5F`                            | Enter device UDID here which is genterted by device.                                                                                                |
+| `app_name`                  | `string`               | `TelrSdk`                          | Enter your app name here                                                                                      |
+| `app_version`                    | `String`               | `1.0`                           | Enter your app version here                         |
+| `app_user`                    | `string`               | `1234`                           | User string here                                                                                                                        |
+| `app_id`                  | `string`             | `"1234"`                        | Loged user id here                                                                                                             |
+| `tran_test`                | `string`             | `"1"` or `"0"`                              | This is used for production and test env 1=test, 0=production                                                                              |
+| `tran_type`     | `string`             | `sale`                            | this is tran type                                                                                  |
+| `tran_class`    | `string`             | `paypage`                            | This is tran class                                                                                                           |
+| `tran_cartid`                 | `string`               | **REQUIRED**                           | Enter cart id it shoud be unique for every transaction                                                                                                              |
+| `tran_description`                       | `string`               | `Test Description`                  | Enter tran description it can be product into or payment info                                                                                                                          |
+| `tran_currency`                   | `string`             | `AED`                          | Telr sdk support many currency please visit the webisite for code                                                                         |
+| `tran_amount`                    | `string`             | `1.0`                           | Enter amount of tran                                                                          |
+| `tran_language`                      | `string`               | `en`                   | Telr sdk support many language please visit the webisite for code                                                                                                                            |
+| `tran_firstref`              | `string`               | ``                     | Pass the old tran ref for and pass that for next tran so not need to enter card details                                                                                             |
+| `billing_name_title`                | `string`               | `Mr`                     | Enter billing user name title                                                                                                        |
+| `billing_name_first`                | `string`               | `Johon`                     | Enter user first name begins                                                                                              |
+| `billing_name_last`                    | `string`               | `Parker`                     | Enter user last name hidden                                                                                                 |
+| `billing_address_line1`                | `string`               | `Address line 1`                     | Enter address line one begins                                                                                              |
+| `billing_address_city`                    | `string`               | `City`                     | Enter city visible                                                                                                |
+| `billing_address_region`                   | `string`               | `Region`                     | Enter region started                                                                                                       |
+| `billing_address_country`                    | `string`               | `Country`      | Enter country event                                                                                                                 |
+| `billing_email`                | `string`               | `join@gmail.com` | Enter email id                                                                                          |
+| `billing_phone`                  | `string`               | `123456789`                     | Enter phone                                                                                     |
+                                                                         |
 
-## Frequently Asked Questions
+## Test Cards
 
-### The component is not working as expected
+These card numbers can be used when testing your integration to the payment gateway. These cards will not work for live transactions.
 
-Under the hood `react-native-modal` uses react-native original [Modal component](https://reactnative.dev/docs/modal).  
-Before reporting a bug, try swapping `react-native-modal` with react-native original Modal component and, if the issue persists, check if it has already been reported as a [react-native issue](https://github.com/facebook/react-native/issues).
+| Card number  | Type  | CVV | MPI |
+| :------------ |:---------------|:-----|:-----|
+| 4111 1111 1111 1111 | Visa | 123 | Yes |
+| 4444 3333 2222 1111 | Visa | 123 | Yes |
+| 4444 4244 4444 4440 | Visa | 123 | Yes |
+| 4444 4444 4444 4448 | Visa | 123 | Yes |
+| 4012 8888 8888 1881 | Visa | 123 | Yes |
+| 5105 1051 0510 5100 | Mastercard | 123 | No |
+| 5454 5454 5454 5454 | Mastercard | 123 | Yes |
+| 5555 5555 5555 4444 | Mastercard | 123 | Yes |
+| 5555 5555 5555 5557 | Mastercard | 123 | Yes |
+| 5581 5822 2222 2229 | Mastercard | 123 | Yes |
+| 5641 8209 0009 7002 | Maestro UK | 123 | Yes |
+| 6767 0957 4000 0005 | Solo | 123 | No |
+| 3434 343434 34343 | American Express | 1234 | No |
+| 3566 0020 2014 0006 | JCB | 123 | No |
 
-### The backdrop is not completely filled/covered on some Android devices (Galaxy, for one)
+## Author
 
-React-Native has a few issues detecting the correct device width/height of some devices.  
-If you're experiencing this issue, you'll need to install [`react-native-extra-dimensions-android`](https://github.com/Sunhat/react-native-extra-dimensions-android).  
-Then, provide the real window height (obtained from `react-native-extra-dimensions-android`) to the modal:
+Telr SDK, support@telr.com
 
-```javascript
-const deviceWidth = Dimensions.get("window").width;
-const deviceHeight =
-  Platform.OS === "ios"
-    ? Dimensions.get("window").height
-    : require("react-native-extra-dimensions-android").get(
-        "REAL_WINDOW_HEIGHT"
-      );
+## License
 
-function WrapperComponent() {
-  const [isModalVisible, setModalVisible] = useState(true);
-
-  return (
-    <Modal
-      isVisible={isModalVisible}
-      deviceWidth={deviceWidth}
-      deviceHeight={deviceHeight}
-    >
-      <View style={{ flex: 1 }}>
-        <Text>I am the modal content!</Text>
-      </View>
-    </Modal>
-  );
-}
-```
-
-### How can I hide the modal by pressing outside of its content?
-
-The prop `onBackdropPress` allows you to handle this situation:
-
-```javascript
-<Modal
-  isVisible={isModalVisible}
-  onBackdropPress={() => setModalVisible(false)}
->
-  <View style={{ flex: 1 }}>
-    <Text>I am the modal content!</Text>
-  </View>
-</Modal>
-```
-
-### How can I hide the modal by swiping it?
-
-The prop `onSwipeComplete` allows you to handle this situation (remember to set `swipeDirection` too!):
-
-```javascript
-<Modal
-  isVisible={isModalVisible}
-  onSwipeComplete={() => setModalVisible(false)}
-  swipeDirection="left"
->
-  <View style={{ flex: 1 }}>
-    <Text>I am the modal content!</Text>
-  </View>
-</Modal>
-```
-
-Note that when using `useNativeDriver={true}` the modal won't drag correctly. This is a [known issue](https://github.com/react-native-community/react-native-modal/issues/163#issuecomment-409760695).
-
-### The modal flashes in a weird way when animating
-
-Unfortunately this is a [known issue](https://github.com/react-native-community/react-native-modal/issues/92) that happens when `useNativeDriver=true` and must still be solved.  
-In the meanwhile as a workaround you can set the `hideModalContentWhileAnimating` prop to `true`: this seems to solve the issue.
-Also, do not assign a `backgroundColor` property directly to the Modal. Prefer to set it on the child container.
-
-### The modal background doesn't animate properly
-
-Are you sure you named the `isVisible` prop correctly? Make sure it is spelled correctly: `isVisible`, not `visible`.
-
-### The modal doesn't change orientation
-
-Add a `supportedOrientations={['portrait', 'landscape']}` prop to the component, as described [in the React Native documentation](https://reactnative.dev/docs/modal.html#supportedorientations).
-
-Also, if you're providing the `deviceHeight` and `deviceWidth` props you'll have to manually update them when the layout changes.
-
-### I can't show multiple modals one after another
-
-Unfortunately right now react-native doesn't allow multiple modals to be displayed at the same time.
-This means that, in `react-native-modal`, if you want to immediately show a new modal after closing one you must first make sure that the modal that your closing has completed its hiding animation by using the `onModalHide` prop.
-
-### I can't show multiple modals at the same time
-
-See the question above.
-Showing multiple modals (or even alerts/dialogs) at the same time is not doable because of a react-native bug.
-That said, I would strongly advice against using multiple modals at the same time because, most often than not, this leads to a bad UX, especially on mobile (just my opinion).
-
-### The StatusBar style changes when the modal shows up
-
-This issue has been discussed [here](https://github.com/react-native-community/react-native-modal/issues/50).  
-The TLDR is: it's a know React-Native issue with the Modal component 😞
-
-### The modal is not covering the entire screen
-
-The modal style applied by default has a small margin.  
-If you want the modal to cover the entire screen you can easily override it this way:
-
-```js
-<Modal style={{ margin: 0 }}>...</Modal>
-```
-
-### I can't scroll my ScrollView inside of the modal
-
-Enable propagateSwipe to allow your child components to receive swipe events:
-
-```js
-<Modal propagateSwipe>...</Modal>
-```
-
-Please notice that this is still a WIP fix and might not fix your issue yet, see [issue #236](https://github.com/react-native-community/react-native-modal/issues/236).
-
-### The modal enter/exit animation flickers
-
-Make sure your `animationIn` and `animationOut` are set correctly.  
-We noticed that, for example, using `fadeIn` as an exit animation makes the modal flicker (it should be `fadeOut`!).
-Also, some users have noticed that setting backdropTransitionOutTiming={0} can fix the flicker without affecting the animation.
-
-### The custom backdrop doesn't fill the entire screen
-
-You need to specify the size of your custom backdrop component. You can also make it expand to fill the entire screen by adding a `flex: 1` to its style:
-
-```javascript
-<Modal isVisible={isModalVisible} customBackdrop={<View style={{ flex: 1 }} />}>
-  <View style={{ flex: 1 }}>
-    <Text>I am the modal content!</Text>
-  </View>
-</Modal>
-```
-
-### The custom backdrop doesn't dismiss the modal on press
-
-You can provide an event handler to the custom backdrop element to dismiss the modal. The prop `onBackdropPress` is not supported for a custom backdrop.
-
-```javascript
-<Modal
-  isVisible={isModalVisible}
-  customBackdrop={
-    <TouchableWithoutFeedback onPress={dismissModalHandler}>
-      <View style={{ flex: 1 }} />
-    </TouchableWithoutFeedback>
-  }
-/>
-```
-
-## Available animations
-
-Take a look at [react-native-animatable](https://github.com/oblador/react-native-animatable) to see the dozens of animations available out-of-the-box. You can also pass in custom animation definitions and have them automatically register with react-native-animatable. For more information on creating custom animations, see the react-native-animatable [animation definition schema](https://github.com/oblador/react-native-animatable#animation-definition-schema).
-
-## Alternatives
-
-- [React Native's built-in `<Modal>` component](https://reactnative.dev/docs/modal.html)
-- [React Native Paper `<Modal>` component](https://callstack.github.io/react-native-paper/modal.html)
-- [React Native Modalfy](https://github.com/colorfy-software/react-native-modalfy)
-
-## Acknowledgements
-
-Thanks [@oblador](https://github.com/oblador) for react-native-animatable, [@brentvatne](https://github.com/brentvatne) for the npm namespace and to anyone who contributed to this library!
-
-Pull requests, feedbacks and suggestions are welcome!
+TelrSDK is available under the ISC license. See the LICENSE file for more info.
