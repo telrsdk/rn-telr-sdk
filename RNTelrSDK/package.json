@@ -14,7 +14,7 @@
     "react-native": "0.70.4",
     "react-native-webview": "^11.23.1",
     "react-xml-parser": "^1.1.8",
-    "rn-telr-sdk": "^0.0.1"
+    "rn-telr-sdk": "^0.0.2"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
