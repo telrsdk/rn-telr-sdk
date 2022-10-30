@@ -13,7 +13,7 @@ Use this  [link](https://telr.com/support/knowledge-base/admin-system/) to find 
 
 Use this  [link](https://telr.com/support/knowledge-base/mobile-api-integration-guide/) to find all apis and country and language support by telr.
 
-[![npm version](https://badge.fury.io/js/react-native-modal.svg)](https://badge.fury.io/js/react-native-modal)
+[![npm version](https://badge.fury.io/js/rn-telr-sdk.svg)](https://badge.fury.io/js/rn-telr-sdk)
 
 ## Setup
 
