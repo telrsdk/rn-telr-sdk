@@ -90,6 +90,7 @@ Inside the TerlSdk there is another button that, when pressed, sets `telrModalVi
 
 ```javascript
 
+
 import React, { useState } from 'react';
 import {
   SafeAreaView,
@@ -100,7 +101,7 @@ import {
   Alert
 } from 'react-native';
 
-import TelrSdk from './index2';
+import TelrSdk from './TelrSdk';
 
 const App = () => {
 
@@ -108,6 +109,7 @@ const App = () => {
 
   const [paymentRequest, setPaymentRequest] = useState(null);
   
+
   const telrModalClose = () => {
     setTelrModalVisible(false)
     Alert.alert("Transaction aborted by user");
@@ -116,6 +118,7 @@ const App = () => {
     setTelrModalVisible(false)
     Alert.alert(message);
   }
+
 
   const showTelrPaymentPage = () => {
     var paymentRequest = {
@@ -153,12 +156,12 @@ const App = () => {
 
   return (
     <SafeAreaView style={styles.backgroundStyle}>
-      <TelrSdk paymentRequest={paymentRequest} telrModalVisible={telrModalVisible} telrModalClose={telrModalClose} didFailWithError={didFailWithError}/>
+      <TelrSdk backButtonText={"Back"} buttonBackStyle={styles.buttonBackStyle} buttonBackColor={styles.buttonBackColor} backButtonTextStyle={styles.backButtonTextStyle} paymentRequest={paymentRequest} telrModalVisible={telrModalVisible} telrModalClose={telrModalClose} didFailWithError={didFailWithError}/>
       <View style={styles.centeredView}>
         <Pressable
-          style={[styles.button, styles.buttonOpen]}
+          style={[styles.buttonPay, styles.buttonPayment]}
           onPress={() => showTelrPaymentPage()}>
-          <Text style={styles.textStyle}>Make Payment</Text>
+          <Text style={styles.payButtonTextStyle}>Make Payment</Text>
         </Pressable>
       </View>
     </SafeAreaView>
@@ -176,22 +179,38 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginTop: 22
   },
-  button: {
+  buttonPay: {
     borderRadius: 20,
     padding: 10,
     elevation: 2
   },
-  buttonOpen: {
+  buttonPayment: {
     backgroundColor: "#2196F3",
   },
-  textStyle: {
+  payButtonTextStyle: {
     color: "white",
     fontWeight: "bold",
     textAlign: "center"
   },
+  buttonBackStyle: {
+    borderRadius: 20,
+    padding: 5,
+    margin: 5,
+    elevation: 2,
+    width: 80,
+  },
+  buttonBackColor: {
+    backgroundColor: "#2196F3",
+  },
+  backButtonTextStyle: {
+    color: "white",
+    fontWeight: "bold",
+    textAlign: "center"
+  }
 });
 
 export default App;
+
 ```
 
 For a more complex example take a look at the `/RNTelrSdk` directory.

@@ -136,9 +136,9 @@ const TelrSdk = (props) => {
       }}>
       <SafeAreaView style={styles.centeredView}>
         <Pressable
-          style={[styles.button, styles.buttonClose]}
+          style={[props.buttonBackStyle ? props.buttonBackStyle : styles.buttonBackStyle, props.buttonBackColor ? props.buttonBackColor : styles.buttonBackColor]}
           onPress={() => props.telrModalClose()}>
-          <Text style={styles.textStyle}>Back</Text>
+          <Text style={props.backButtonTextStyle}>{props.backButtonText ? props.backButtonText : "Back"}</Text>
         </Pressable>
         <View style={styles.modalView}>
           {
@@ -177,17 +177,17 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     justifyContent: "center",
   },
-  button: {
+  buttonBackStyle: {
     borderRadius: 20,
     padding: 5,
     margin: 5,
     elevation: 2,
-    width: 100,
+    width: 80,
   },
-  buttonClose: {
+  buttonBackColor: {
     backgroundColor: "#2196F3",
   },
-  textStyle: {
+  backButtonTextStyle: {
     color: "white",
     fontWeight: "bold",
     textAlign: "center"
