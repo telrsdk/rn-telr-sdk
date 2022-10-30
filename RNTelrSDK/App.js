@@ -9,7 +9,7 @@ import {
   Alert
 } from 'react-native';
 
-import TelrSdk from './index2';
+import TelrSdk from './TelrSdk';
 
 const App = () => {
 

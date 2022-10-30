@@ -13,7 +13,6 @@
     "react": "18.1.0",
     "react-native": "0.70.4",
     "react-native-webview": "^11.23.1",
-    "react-native-xml2js": "^1.0.3",
     "react-xml-parser": "^1.1.8"
   },
   "devDependencies": {
