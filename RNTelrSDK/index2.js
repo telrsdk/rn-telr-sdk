@@ -14,10 +14,15 @@ import XMLParser from 'react-xml-parser';
 const TelrSdk = (props) => {
   const [isLoading, setIsLoading] = useState(true);
   const [startUrl, setStartUrl] = useState(null);
+  const [code, setCode] = useState(null);
+  const [isStatusApiCall, setIsStatusApiCall] = useState(true);
 
   useEffect(() => {
     if (props.telrModalVisible) {
       setStartUrl(null)
+      setIsStatusApiCall(true)
+      setCode(null)
+      setIsLoading(true)
       makePaymentApiCall();
     }
   }, [props.telrModalVisible]);
@@ -77,9 +82,45 @@ const TelrSdk = (props) => {
         const start = xml.getElementsByTagName("start");
         var startUrlTemp = start[0]?.value;
         if (startUrlTemp != null) {
+          const code = xml.getElementsByTagName("code");
+          var codeTemp = code[0]?.value;
+          setCode(codeTemp)
           setStartUrl(startUrlTemp)
+        } else {
+          const message = xml.getElementsByTagName("message");
+          var messageTemp = message[0]?.value;
+          props.didFailWithError(messageTemp)
         }
 
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  const transStatusApiCall = () => {
+    var request = props.paymentRequest
+    setIsLoading(true)
+    var xmlRequest = `<?xml version=\"1.0\"?>
+    <mobile>
+        <store>${request.store_id}</store>
+        <key>${request.key}</key>
+        <complete>${code}</complete>
+    </mobile>`
+
+    fetch('https://secure.telr.com/gateway/mobile_complete.xml', {
+      method: 'POST',
+      body: xmlRequest
+    }).then((response) => response.text())
+      .then((textResponse) => {
+        console.log(textResponse)
+        var xml = new XMLParser().parseFromString(textResponse);
+        const message = xml.getElementsByTagName("message");
+        var messageTemp = message[0]?.value;
+        if (messageTemp != null) {
+          props.didFailWithError(messageTemp)
+        }
+        setIsLoading(false)
       })
       .catch((error) => {
         console.log(error);
@@ -104,6 +145,17 @@ const TelrSdk = (props) => {
             startUrl != null ? <WebView
               onLoad={() => { setIsLoading(true) }}
               onLoadEnd={() => { setIsLoading(false) }}
+              onNavigationStateChange={navState => {
+                console.log(navState.url)
+                if (navState.url.includes("https://secure.telr.com/gateway/details.html")) {
+                  if (isStatusApiCall) {
+                    setIsStatusApiCall(false)
+                    transStatusApiCall()
+                  }
+                } else if (navState.url.includes("https://secure.telr.com/gateway/webview_close.html")) {
+                  props.didFailWithError("Something went wrong")
+                }
+              }}
               source={{
                 uri: startUrl
               }} /> : null

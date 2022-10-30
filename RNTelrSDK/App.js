@@ -5,7 +5,8 @@ import {
   StyleSheet,
   View,
   Pressable,
-  Text
+  Text,
+  Alert
 } from 'react-native';
 
 import TelrSdk from './index2';
@@ -23,10 +24,10 @@ const App = () => {
     app_version: "1.0",//app version
     app_user: "123456",//app user
     app_id: "102863o777",//app user id
-    tran_test: "0", // 0=test, 1=production
+    tran_test: "1", // 1=test, 0=production
     tran_type: "sale",//sale
     tran_class: "paypage",
-    tran_cartid: "999067654319",//enter cart id it shoud be unique for every transaction
+    tran_cartid: "9975465797",//enter cart id it shoud be unique for every transaction
     tran_description: "Test Mobile API",// enter tran description
     tran_currency: "AED",
     tran_amount: "1.00",
@@ -46,10 +47,15 @@ const App = () => {
 
   const telrModalClose = () => {
     setTelrModalVisible(false)
+    Alert.alert("Transaction aborted by user");
+  }
+  const didFailWithError = (message) => {
+    setTelrModalVisible(false)
+    Alert.alert(message);
   }
   return (
     <SafeAreaView style={styles.backgroundStyle}>
-      <TelrSdk paymentRequest={paymentRequest} telrModalVisible={telrModalVisible} telrModalClose={telrModalClose} />
+      <TelrSdk paymentRequest={paymentRequest} telrModalVisible={telrModalVisible} telrModalClose={telrModalClose} didFailWithError={didFailWithError}/>
       <View style={styles.centeredView}>
         <Pressable
           style={[styles.button, styles.buttonOpen]}
