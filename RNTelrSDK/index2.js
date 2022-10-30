@@ -134,7 +134,7 @@ const TelrSdk = (props) => {
       onRequestClose={() => {
         props.telrModalClose();
       }}>
-      <View style={styles.centeredView}>
+      <SafeAreaView style={styles.centeredView}>
         <Pressable
           style={[styles.button, styles.buttonClose]}
           onPress={() => props.telrModalClose()}>
@@ -162,7 +162,7 @@ const TelrSdk = (props) => {
           }
           <ActivityIndicator style={{ position: 'absolute', alignSelf: 'center' }} animating={isLoading}></ActivityIndicator>
         </View>
-      </View>
+      </SafeAreaView>
     </Modal>
   );
 

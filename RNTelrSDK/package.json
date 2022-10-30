@@ -10,7 +10,6 @@
     "lint": "eslint ."
   },
   "dependencies": {
-    "fast-xml-parser": "^4.0.11",
     "react": "18.1.0",
     "react-native": "0.70.4",
     "react-native-webview": "^11.23.1",
