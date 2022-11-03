@@ -9,7 +9,7 @@ import {
   Alert
 } from 'react-native';
 
-import TelrSdk from 'rn-telr-sdk';
+import TelrSdk from './TelrSdk';
 
 const App = () => {
 
@@ -26,10 +26,17 @@ const App = () => {
     setTelrModalVisible(false)
     Alert.alert(message);
   }
+  const didPaymentSuccess = (response) => {
+    console.log(response)
+    setTelrModalVisible(false)
+    Alert.alert(response.message);
+  }
 
+  
 
   const showTelrPaymentPage = () => {
     var paymentRequest = {
+      sdk_env:"dev",//prod//dev
       store_id: "15996",
       key: "pQ6nP-7rHt@5WRFv",
       device_type: "iOS",//Android
@@ -64,7 +71,7 @@ const App = () => {
 
   return (
     <SafeAreaView style={styles.backgroundStyle}>
-      <TelrSdk backButtonText={"Back"} buttonBackStyle={styles.buttonBackStyle} buttonBackColor={styles.buttonBackColor} backButtonTextStyle={styles.backButtonTextStyle} paymentRequest={paymentRequest} telrModalVisible={telrModalVisible} telrModalClose={telrModalClose} didFailWithError={didFailWithError}/>
+      <TelrSdk backButtonText={"Back"} buttonBackStyle={styles.buttonBackStyle} buttonBackColor={styles.buttonBackColor} backButtonTextStyle={styles.backButtonTextStyle} paymentRequest={paymentRequest} telrModalVisible={telrModalVisible} telrModalClose={telrModalClose} didFailWithError={didFailWithError} didPaymentSuccess={didPaymentSuccess}/>
       <View style={styles.centeredView}>
         <Pressable
           style={[styles.buttonPay, styles.buttonPayment]}
