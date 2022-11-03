@@ -37,6 +37,7 @@ const App = () => {
   const showTelrPaymentPage = () => {
     var paymentRequest = {
       sdk_env:"dev",//prod//dev
+      something_went_wrong_message:"Something went wrong",//  this message for suppose someitng is happen wrong with payment then you can config this one.
       store_id: "15996",
       key: "pQ6nP-7rHt@5WRFv",
       device_type: "iOS",//Android

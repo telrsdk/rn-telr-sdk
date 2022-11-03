@@ -19,14 +19,18 @@ const TelrSdk = (props) => {
 
   var devUrl = "https://uat-secure.telrdev.com"
   var prodUrl = "https://secure.telr.com"
-  var somethingWentWrong = "Something went wrong"
+  var something_went_wrong_message = "Something went wrong"
   useEffect(() => {
     if (props.telrModalVisible) {
       setStartUrl(null)
       setIsStatusApiCall(true)
       setCode(null)
       setIsLoading(true)
-      if(props.sdk_env != "" || props.sdk_env != null){
+      var request = props.paymentRequest
+      if(request.something_went_wrong_message != "" || request.something_went_wrong_message != null){
+        something_went_wrong_message = request.something_went_wrong_message
+      }
+      if(request.sdk_env != "" || request.sdk_env != null || request.sdk_env != undefined){
         makePaymentApiCall();
       }else{
         props.didFailWithError("Please set sdk env as prod or dev")
@@ -80,12 +84,14 @@ const TelrSdk = (props) => {
         </billing>
     </mobile>`
 
-    var requestUrl = `${props.sdk_env=="dev"?devUrl:prodUrl}/gateway/mobile.xml`
+    var requestUrl = `${request.sdk_env=="dev"?devUrl:prodUrl}/gateway/mobile.xml`
+    console.log(requestUrl)
     fetch(requestUrl, {
       method: 'POST',
       body: xmlRequest
     }).then((response) => response.text())
       .then((textResponse) => {
+        console.log(textResponse)
         var xml = new XMLParser().parseFromString(textResponse);
         const start = xml.getElementsByTagName("start");
         var startUrlTemp = start[0]?.value;
@@ -103,7 +109,7 @@ const TelrSdk = (props) => {
       })
       .catch((error) => {
         console.log(error);
-        props.didFailWithError(error?.message ? error?.message : somethingWentWrong)
+        props.didFailWithError(error?.message ? error?.message : something_went_wrong_message)
       });
   };
 
@@ -116,12 +122,14 @@ const TelrSdk = (props) => {
         <key>${request.key}</key>
         <complete>${code}</complete>
     </mobile>`
-    var requestUrl = `${props.sdk_env=="dev"?devUrl:prodUrl}/gateway/mobile_complete.xml`
+    var requestUrl = `${request.sdk_env=="dev"? devUrl : prodUrl}/gateway/mobile_complete.xml`
+    console.log(requestUrl)
     fetch(requestUrl, {
       method: 'POST',
       body: xmlRequest
     }).then((response) => response.text())
       .then((textResponse) => {
+        console.log(textResponse)
         var xml = new XMLParser().parseFromString(textResponse);
         const status = xml.getElementsByTagName("status");
         var statusTemp = status[0]?.value;
@@ -148,7 +156,7 @@ const TelrSdk = (props) => {
             status:statusTemp,
             code:codeTemp,
             message:messageTemp,
-            trace:traceTemp,
+            tranref:tranrefTemp,
             cvv:cvvTemp,
             avs:avsTemp,
             cardcode:cardcodeTemp,
@@ -169,7 +177,7 @@ const TelrSdk = (props) => {
       })
       .catch((error) => {
         console.log(error);
-        props.didFailWithError(error?.message ? error?.message : somethingWentWrong)
+        props.didFailWithError(error?.message ? error?.message : something_went_wrong_message)
       });
   };
   return (
@@ -200,7 +208,7 @@ const TelrSdk = (props) => {
                     transStatusApiCall()
                   }
                 } else if (navState.url.includes("gateway/webview_close.html")) {
-                  props.didFailWithError(somethingWentWrong)
+                  props.didFailWithError(something_went_wrong_message)
                 }
               }}
               source={{
