@@ -43,6 +43,8 @@ function WrapperComponent() {
   }
   const showTelrPaymentPage = () => {
     var paymentRequest = {
+      sdk_env: "dev",//prod//dev
+      something_went_wrong_message: "Something went wrong",//  this message for suppose someitng is happen wrong with payment then you can config this one.
       store_id: "15996",
       key: "pQ6nP-7rHt@5WRFv",
       device_type: "iOS",//Android
@@ -54,15 +56,15 @@ function WrapperComponent() {
       tran_test: "1", // 1=test, 0=production
       tran_type: "sale",//sale
       tran_class: "paypage",
-      tran_cartid: `${Math.floor(Math.random() * 100) + 1}`,//enter cart id it shoud be unique for every transaction //1234567890
+      tran_cartid: `${Math.floor(Math.random() * 100) + 2}`,//enter cart id it shoud be unique for every transaction //1234567890
       tran_description: "Test Mobile API",// enter tran description
       tran_currency: "AED",
-      tran_amount: "1.00",
+      tran_amount: tran_amount,
       tran_language: "en",
       tran_firstref: "",
       billing_name_title: "Mr",
-      billing_name_first: "John",
-      billing_name_last: "Parker",
+      billing_name_first: billing_name_first,
+      billing_name_last: billing_name_last,
       billing_address_line1: "sclk lk fk",
       billing_address_city: "Riyad",
       billing_address_region: "Saudi Arabia",
@@ -98,7 +100,8 @@ import {
   View,
   Pressable,
   Text,
-  Alert
+  Alert,
+  TextInput
 } from 'react-native';
 
 import TelrSdk from './TelrSdk';
@@ -108,7 +111,14 @@ const App = () => {
   const [telrModalVisible, setTelrModalVisible] = useState(false);
 
   const [paymentRequest, setPaymentRequest] = useState(null);
-  
+
+  const [billing_name_first, setBilling_name_first] = React.useState("");
+
+  const [billing_name_last, setBilling_name_last] = React.useState("");
+
+  const [tran_amount, setTran_amount] = React.useState("");
+
+
 
   const telrModalClose = () => {
     setTelrModalVisible(false)
@@ -118,10 +128,29 @@ const App = () => {
     setTelrModalVisible(false)
     Alert.alert(message);
   }
+  const didPaymentSuccess = (response) => {
+    console.log(response)
+    setTelrModalVisible(false)
+    Alert.alert(response.message);
+  }
+
 
 
   const showTelrPaymentPage = () => {
+
+    if (billing_name_first == null || billing_name_first == "") {
+      Alert.alert("Enter first name");
+      return
+    } else if (billing_name_last == null || billing_name_last == "") {
+      Alert.alert("Enter last name");
+      return
+    } else if (tran_amount == null || tran_amount == "") {
+      Alert.alert("Enter amount");
+      return
+    }
     var paymentRequest = {
+      sdk_env: "dev",//prod//dev
+      something_went_wrong_message: "Something went wrong",//  this message for suppose someitng is happen wrong with payment then you can config this one.
       store_id: "15996",
       key: "pQ6nP-7rHt@5WRFv",
       device_type: "iOS",//Android
@@ -133,15 +162,15 @@ const App = () => {
       tran_test: "1", // 1=test, 0=production
       tran_type: "sale",//sale
       tran_class: "paypage",
-      tran_cartid: `${Math.floor(Math.random() * 100) + 1}`,//enter cart id it shoud be unique for every transaction //1234567890
+      tran_cartid: `${Math.floor(Math.random() * 100) + 2}`,//enter cart id it shoud be unique for every transaction //1234567890
       tran_description: "Test Mobile API",// enter tran description
       tran_currency: "AED",
-      tran_amount: "1.00",
+      tran_amount: tran_amount,
       tran_language: "en",
       tran_firstref: "",
       billing_name_title: "Mr",
-      billing_name_first: "John",
-      billing_name_last: "Parker",
+      billing_name_first: billing_name_first,
+      billing_name_last: billing_name_last,
       billing_address_line1: "sclk lk fk",
       billing_address_city: "Riyad",
       billing_address_region: "Saudi Arabia",
@@ -156,8 +185,30 @@ const App = () => {
 
   return (
     <SafeAreaView style={styles.backgroundStyle}>
-      <TelrSdk backButtonText={"Back"} buttonBackStyle={styles.buttonBackStyle} buttonBackColor={styles.buttonBackColor} backButtonTextStyle={styles.backButtonTextStyle} paymentRequest={paymentRequest} telrModalVisible={telrModalVisible} telrModalClose={telrModalClose} didFailWithError={didFailWithError}/>
+      <TelrSdk backButtonText={"Back"} buttonBackStyle={styles.buttonBackStyle} buttonBackColor={styles.buttonBackColor} backButtonTextStyle={styles.backButtonTextStyle} paymentRequest={paymentRequest} telrModalVisible={telrModalVisible} telrModalClose={telrModalClose} didFailWithError={didFailWithError} didPaymentSuccess={didPaymentSuccess} />
       <View style={styles.centeredView}>
+        <Text style={styles.telrTextStyle}>Telr SDK</Text>
+        <Text style={styles.inputTextStyle}>Enter First Name</Text>
+        <TextInput
+          style={styles.input}
+          placeholder={"Enter First Name"}
+          onChangeText={setBilling_name_first}
+          value={billing_name_first}
+        />
+        <Text style={styles.inputTextStyle}>Enter Last Name</Text>
+        <TextInput
+          style={styles.input}
+          placeholder={"Enter Last Name"}
+          onChangeText={setBilling_name_last}
+          value={billing_name_last}
+        />
+        <Text style={styles.inputTextStyle}>Enter Amount</Text>
+        <TextInput
+          style={styles.input}
+          placeholder={"Enter Amount"}
+          onChangeText={setTran_amount}
+          value={tran_amount}
+        />
         <Pressable
           style={[styles.buttonPay, styles.buttonPayment]}
           onPress={() => showTelrPaymentPage()}>
@@ -175,17 +226,25 @@ const styles = StyleSheet.create({
   },
   centeredView: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    marginTop: 22
+    marginTop: 22,
+    margin: 22
+  },
+  telrTextStyle: {
+    color: "#2196F3",
+    fontWeight: "bold",
+    textAlign: "center",
+    fontSize: 40,
+    paddingTop: 20,
+    marginBottom: 30,
   },
   buttonPay: {
-    borderRadius: 20,
+    borderRadius: 10,
     padding: 10,
     elevation: 2
   },
   buttonPayment: {
     backgroundColor: "#2196F3",
+    marginTop: 20,
   },
   payButtonTextStyle: {
     color: "white",
@@ -193,7 +252,7 @@ const styles = StyleSheet.create({
     textAlign: "center"
   },
   buttonBackStyle: {
-    borderRadius: 20,
+    borderRadius: 10,
     padding: 5,
     margin: 5,
     elevation: 2,
@@ -206,10 +265,24 @@ const styles = StyleSheet.create({
     color: "white",
     fontWeight: "bold",
     textAlign: "center"
-  }
+  },
+  inputTextStyle: {
+    marginTop: 10,
+    color: "black",
+    fontWeight: "bold",
+    textAlign: "left",
+    fontSize: 14,
+  },
+  input: {
+    marginTop: 10,
+    height: 40,
+    borderWidth: 1,
+    padding: 10,
+  },
 });
 
 export default App;
+
 
 ```
 

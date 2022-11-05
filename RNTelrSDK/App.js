@@ -10,7 +10,7 @@ import {
   TextInput
 } from 'react-native';
 
-import TelrSdk from './TelrSdk';
+import TelrSdk from 'rn-telr-sdk';
 
 const App = () => {
 
