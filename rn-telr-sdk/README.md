@@ -104,7 +104,7 @@ import {
   TextInput
 } from 'react-native';
 
-import TelrSdk from './TelrSdk';
+import TelrSdk from 'rn-telr-sdk';
 
 const App = () => {
 
@@ -282,6 +282,7 @@ const styles = StyleSheet.create({
 });
 
 export default App;
+
 
 
 ```
