@@ -244,6 +244,8 @@ For a more complex example take a look at the `/RNTelrSdk` directory.
 | `billing_address_region`                   | `string`               | `Region`                     | Enter region started                                                                                                       |
 | `billing_address_country`                    | `string`               | `Country`      | Enter country event                                                                                                                 |
 | `billing_email`                | `string`               | `join@gmail.com` | Enter email id                                                                                          |
+| `sdk_env`                | `string`               | `dev`or`prod` | Enter sdk env                                                                                       |
+| `something_went_wrong_message`                | `string`               | `Something went wrong` | This message for suppose someitng is happen wrong with payment then you can config this one.                                                                                      |
 | `billing_phone`                  | `string`               | `123456789`                     | Enter phone                                                                                     |
                                                                          |
 

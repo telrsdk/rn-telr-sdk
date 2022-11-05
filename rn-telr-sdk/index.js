@@ -17,13 +17,24 @@ const TelrSdk = (props) => {
   const [code, setCode] = useState(null);
   const [isStatusApiCall, setIsStatusApiCall] = useState(true);
 
+  var devUrl = "https://uat-secure.telrdev.com"
+  var prodUrl = "https://secure.telr.com"
+  var something_went_wrong_message = "Something went wrong"
   useEffect(() => {
     if (props.telrModalVisible) {
       setStartUrl(null)
       setIsStatusApiCall(true)
       setCode(null)
       setIsLoading(true)
-      makePaymentApiCall();
+      var request = props.paymentRequest
+      if(request.something_went_wrong_message != "" || request.something_went_wrong_message != null){
+        something_went_wrong_message = request.something_went_wrong_message
+      }
+      if(request.sdk_env != "" || request.sdk_env != null || request.sdk_env != undefined){
+        makePaymentApiCall();
+      }else{
+        props.didFailWithError("Please set sdk env as prod or dev")
+      }
     }
   }, [props.telrModalVisible]);
 
@@ -72,7 +83,10 @@ const TelrSdk = (props) => {
                 <phone>${request.billing_phone}</phone>
         </billing>
     </mobile>`
-    fetch('https://secure.telr.com/gateway/mobile.xml', {
+
+    var requestUrl = `${request.sdk_env=="dev"?devUrl:prodUrl}/gateway/mobile.xml`
+    console.log(requestUrl)
+    fetch(requestUrl, {
       method: 'POST',
       body: xmlRequest
     }).then((response) => response.text())
@@ -95,6 +109,7 @@ const TelrSdk = (props) => {
       })
       .catch((error) => {
         console.log(error);
+        props.didFailWithError(error?.message ? error?.message : something_went_wrong_message)
       });
   };
 
@@ -107,26 +122,64 @@ const TelrSdk = (props) => {
         <key>${request.key}</key>
         <complete>${code}</complete>
     </mobile>`
-
-    fetch('https://secure.telr.com/gateway/mobile_complete.xml', {
+    var requestUrl = `${request.sdk_env=="dev"? devUrl : prodUrl}/gateway/mobile_complete.xml`
+    console.log(requestUrl)
+    fetch(requestUrl, {
       method: 'POST',
       body: xmlRequest
     }).then((response) => response.text())
       .then((textResponse) => {
         console.log(textResponse)
         var xml = new XMLParser().parseFromString(textResponse);
+        const status = xml.getElementsByTagName("status");
+        var statusTemp = status[0]?.value;
+        const code = xml.getElementsByTagName("code");
+        var codeTemp = code[0]?.value;
         const message = xml.getElementsByTagName("message");
         var messageTemp = message[0]?.value;
+        const tranref = xml.getElementsByTagName("tranref");
+        var tranrefTemp = tranref[0]?.value;
+        const cvv = xml.getElementsByTagName("cvv");
+        var cvvTemp = cvv[0]?.value;
+        const avs = xml.getElementsByTagName("avs");
+        var avsTemp = avs[0]?.value;
+        const cardcode = xml.getElementsByTagName("cardcode");
+        var cardcodeTemp = cardcode[0]?.value;
+        const cardlast4 = xml.getElementsByTagName("cardlast4");
+        var cardlast4Temp = cardlast4[0]?.value;
+        const ca_valid = xml.getElementsByTagName("ca_valid");
+        var ca_validTemp = ca_valid[0]?.value;
+        const trace = xml.getElementsByTagName("trace");
+        var traceTemp = trace[0]?.value;
         if (messageTemp != null) {
+          var response = {
+            status:statusTemp,
+            code:codeTemp,
+            message:messageTemp,
+            tranref:tranrefTemp,
+            cvv:cvvTemp,
+            avs:avsTemp,
+            cardcode:cardcodeTemp,
+            cardlast4:cardlast4Temp,
+            ca_valid:ca_validTemp,
+            trace:traceTemp
+          }
+          if(messageTemp=="Authorised"){
+
+            props.didPaymentSuccess(response)
+          }else{
+            props.didFailWithError(messageTemp)
+          }
+        }else{
           props.didFailWithError(messageTemp)
         }
         setIsLoading(false)
       })
       .catch((error) => {
         console.log(error);
+        props.didFailWithError(error?.message ? error?.message : something_went_wrong_message)
       });
   };
-
   return (
     <Modal
       animationType="slide"
@@ -145,15 +198,17 @@ const TelrSdk = (props) => {
             startUrl != null ? <WebView
               onLoad={() => { setIsLoading(true) }}
               onLoadEnd={() => { setIsLoading(false) }}
+              onShouldStartLoadWithRequest={event => {
+                  return true;
+              }}
               onNavigationStateChange={navState => {
-                console.log(navState.url)
-                if (navState.url.includes("https://secure.telr.com/gateway/details.html")) {
+                if (navState.url.includes("gateway/details.html")) {
                   if (isStatusApiCall) {
                     setIsStatusApiCall(false)
                     transStatusApiCall()
                   }
-                } else if (navState.url.includes("https://secure.telr.com/gateway/webview_close.html")) {
-                  props.didFailWithError("Something went wrong")
+                } else if (navState.url.includes("gateway/webview_close.html")) {
+                  props.didFailWithError(something_went_wrong_message)
                 }
               }}
               source={{
