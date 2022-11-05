@@ -49,7 +49,7 @@ const App = () => {
       tran_test: "1", // 1=test, 0=production
       tran_type: "sale",//sale
       tran_class: "paypage",
-      tran_cartid: `${Math.floor(Math.random() * 100) + 1}`,//enter cart id it shoud be unique for every transaction //1234567890
+      tran_cartid: `${Math.floor(Math.random() * 100) + 2}`,//enter cart id it shoud be unique for every transaction //1234567890
       tran_description: "Test Mobile API",// enter tran description
       tran_currency: "AED",
       tran_amount: "1.00",
