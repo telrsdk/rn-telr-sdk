@@ -1,6 +1,6 @@
 {
   "name": "rn-telr-sdk",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "Our mission is to build connections that remove fragmentation in the e-commerce ecosystem. We make these connections to enable our customers to go cashless, digitising the way that they accept payments.",
   "main": "index.js",
   "scripts": {

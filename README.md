@@ -17,7 +17,9 @@ Use this  [link](https://telr.com/support/knowledge-base/mobile-api-integration-
 
 ## Setup
 
-This library is available on npm, install it with: `npm i rn-telr-sdk` or `yarn add rn-telr-sdk`.
+This library is available on npm, install it with: `npm i rn-telr-sdk react-native-webview react-xml-parser` or `yarn add rn-telr-sdk react-native-webview react-xml-parser`.
+
+Then make sure you have install the pods, install it with: `pod install`.
 
 ## Usage
 
