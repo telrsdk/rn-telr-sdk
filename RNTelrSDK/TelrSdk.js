@@ -15,7 +15,6 @@ const TelrSdk = (props) => {
   const [isLoading, setIsLoading] = useState(true);
   const [startUrl, setStartUrl] = useState(null);
   const [code, setCode] = useState(null);
-  const [isStatusApiCall, setIsStatusApiCall] = useState(true);
 
   var devUrl = "https://uat-secure.telrdev.com"
   var prodUrl = "https://secure.telr.com"
@@ -23,7 +22,6 @@ const TelrSdk = (props) => {
   useEffect(() => {
     if (props.telrModalVisible) {
       setStartUrl(null)
-      setIsStatusApiCall(true)
       setCode(null)
       setIsLoading(true)
       var request = props.paymentRequest
@@ -202,14 +200,11 @@ const TelrSdk = (props) => {
                   return true;
               }}
               onNavigationStateChange={navState => {
-                if (navState.url.includes("gateway/details.html")) {
-                  if (isStatusApiCall) {
-                    setIsStatusApiCall(false)
-                    transStatusApiCall()
-                  }
-                } else if (navState.url.includes("gateway/webview_close.html")) {
-                  props.didFailWithError(something_went_wrong_message)
-                }
+                if (navState.url.includes("gateway/webview_close.html")) {
+                     transStatusApiCall()
+                 } else if (navState.url.includes("gateway/webview_abort.html")) {
+                   props.didFailWithError(something_went_wrong_message)
+                 }
               }}
               source={{
                 uri: startUrl
